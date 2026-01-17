@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: taskmanager
+  datasource:
+    url: jdbc:mysql://localhost:3306/taskdb
+    username: root
+    password: sahil1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  radis:
+    data:
+      host: localhost
+      port: 6379
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sahilindira007@gmail.com
+    password: rhej hfpw qoww rhpe
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+
+server:
+  port: 8080
+
