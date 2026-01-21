@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurers
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -23,18 +24,22 @@ public class    SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtFilter jwtFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/add").permitAll()
-                        .requestMatchers("/api/users/debug").authenticated()
-                        .requestMatchers("/api/tasks/**").authenticated()// 👈 TEMP DEBUG
-                        .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
+                        .requestMatchers("/api/users/login", "/api/users/signup")
+                        .permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/users")
+                        .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
-                ) .httpBasic(Customizer.withDefaults());
+                ) .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();

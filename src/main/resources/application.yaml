@@ -6,10 +6,8 @@ spring:
     username: root
     password: sahil1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-  radis:
-    data:
-      host: localhost
-      port: 6379
+  redis:
+    uri: redis://default:YVpPkIuzs8yH5022HrEF5K98bNb2alAM@redis-18114.crce263.ap-south-1-1.ec2.cloud.redislabs.com:18114
   mail:
     host: smtp.gmail.com
     port: 587
@@ -27,8 +25,46 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  kafka:
+    bootstrap-servers: kafka-207197-0.cloudclusters.net:10113
+
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: >
+        org.apache.kafka.common.security.scram.ScramLoginModule required
+        username="spring_user"
+        password="root1234";
+
+
+      ssl.truststore.location: C:/kafka-certs/kafka.truststore.jks
+
+      ssl.truststore.password: OVeygSck
+      ssl.keystore.location: C:/kafka-certs/kafka.keystore.jks
+      ssl.keystore.password: OVeygSck
+      ssl.key.password: OVeygSck
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+      # ✅ CONSUMER CONFIG
+    consumer:
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        group-id: test-group
+        auto-offset-reset: earliest
+        enable-auto-commit: true
+        properties:
+          spring.json.trusted.packages: com.example.taskmanager.dto
+
 
 
 server:
   port: 8080
+
+
+
+
+
 

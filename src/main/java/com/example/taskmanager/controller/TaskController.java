@@ -1,7 +1,9 @@
 package com.example.taskmanager.controller;
 
 
+import com.example.taskmanager.dto.TaskAnalyticsDto;
 import com.example.taskmanager.entity.Task;
+import com.example.taskmanager.service.AnalyticsService;
 import com.example.taskmanager.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ public class TaskController {
 
 
     private final TaskService taskService;
+    private  final AnalyticsService analyticsService;
 
     @PostMapping
     public Task createTask(@RequestBody Task task, Authentication authentication){
@@ -33,11 +36,16 @@ public class TaskController {
         return taskService.getTask(authentication.getName());
     }
 
-    @GetMapping("/updatestatus/{id}")
-    public ResponseEntity<Object> updateStatus(@PathVariable long id,@RequestBody Boolean status,Authentication authentication){
+    @PutMapping("/updatestatus/{id}/{status}")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable Long id,
+            @PathVariable Boolean status,
+            Authentication authentication) {
+
         taskService.updateStatus(id, authentication.getName(), status);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return ResponseEntity.accepted().build();
     }
+
 
     @GetMapping("/today")
     public List<Task> getTodayTasks(Authentication authentication) {
@@ -55,6 +63,11 @@ public class TaskController {
                 LocalDate.parse(startDate),
                 LocalDate.parse(endDate)
         );
+    }
+
+    @GetMapping("/analytics")
+    public TaskAnalyticsDto getAnalyticys(Authentication authentication){
+        return analyticsService.getAnalytics(authentication.getName());
     }
 
 

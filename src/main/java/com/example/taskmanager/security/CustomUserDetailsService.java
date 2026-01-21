@@ -3,7 +3,6 @@ package com.example.taskmanager.security;
 import com.example.taskmanager.entity.User;
 import com.example.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,27 +10,35 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
+
+        // SAFE authority handling
+        List<SimpleGrantedAuthority> authorities =
+                (user.getRoles() == null || user.getRoles().isEmpty())
+                        ? List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                        : user.getRoles()
+                        .stream()
+                        .map(role ->
+                                new SimpleGrantedAuthority("ROLE_" + role.name()))
+                        .toList();
+
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
-                user.getPassword(),
-                user.getRoles()
-                        .stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                        .toList()
+                user.getPassword(),   // encoded password
+                authorities
         );
     }
 }
