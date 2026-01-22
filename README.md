@@ -111,5 +111,20 @@ git clone https://github.com/SAHILSALUNKHE007/TaskManager.git
 cd TaskManager
 mvn clean install
 mvn spring-boot:run
+```
+
+## 📌 Future Enhancements
+
+- Email / push notifications  
+- Frontend dashboard (charts & graphs)  
+- Docker & Cloud deployment  
+
+---
+
+## 👨‍💻 Author
+
+**Sahil Salunkhe**  
+GitHub: https://github.com/SAHILSALUNKHE007
+
 
 
